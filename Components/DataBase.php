@@ -1,37 +1,33 @@
 <?php
-
-
-
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-
-
-//use PDO;
-//use PDOException;
 
 class DataBase
 {
     private $driver;
     private $host;
-    private $name;
-    private $user;
-    private $password;
+    private $dbname;
+    private $dbuser;
+    private $dbpassword;
     private $charset;
     private $pdo;
 
-    public function __construct()
-    {
 
+//созданние приватного свойства для того чтобы по умолчанию подключение к бд было null реализация патерна сингелтон
+    private static $instance = null;
+
+// cоздание приватного construct  для того чтобы никто не мог получить доступ к нему реализация патерна сингелтон
+    private function __construct()
+    {
         $this->driver = 'mysql'; // тип базы данных, с которой мы будем работать
         $this->host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального
-        $this->name = 'MarlinOopComponetsDataBase'; // имя базы данных
+        $this->dbname = 'MarlinOopComponetsDataBase'; // имя базы данных
         $this->user = 'root'; // имя пользователя для базы данных
         $this->password = ''; // пароль пользователя
         $this->charset = 'utf8'; // кодировка по умолчанию
 
-        $dsn = "$this->driver:host=$this->host;dbname=$this->name;charset=$this->charset";
+        $dsn = "$this->driver:host=$this->host;dbname=$this->dbname;charset=$this->charset";
 // Setting options
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -39,28 +35,37 @@ class DataBase
         ];
 // Making the connection to the database
         try {
-            $this->pdo = new PDO($dsn, $this->user, $this->password, $options);
+            $this->pdo = new PDO($dsn, $this->dbuser, $this->dbpassword, $options);
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
         }
 
+    }
 
+// реализация патерна сингелтон через подключение к базе данных
+    public static function getInstance()
 
+    {
+        if (!isset(self::$instance)) {
 
+            self::$instance = new Database();
+        }
 
+        return self::$instance;
     }
 
     //- получить все записи из таблицы
-    public function getAll($table)
 
+    public function getAll($table)
     {
         $sql = "SELECT * FROM $table";
         $stmt = $this->pdo->query($sql);
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
         return $result;
     }
 
 //- получить одну запись из таблицы по id
+
     public function getOne($table, $id)
 
     {
@@ -86,7 +91,6 @@ class DataBase
         header("Location:  /Components/testing/index.php");
     }
 
-
     //   - обновить данные записи в таблице по id
     public function update($table, $id, $data)
 
@@ -94,12 +98,11 @@ class DataBase
 //удаляю последный елемент масива
         array_pop($data);
 
-            $keys='';
-        foreach ($data as $column=>$value){
+        $keys = '';
+        foreach ($data as $column => $value) {
 
-            if($column !='id' )
-            {
-                $keys .= $column.'=:'.$column.', ';
+            if ($column != 'id') {
+                $keys .= $column . '=:' . $column . ', ';
 
             }
         }
@@ -115,8 +118,8 @@ class DataBase
         header("Location:  /Components/testing/index.php");
 
     }
-    //- удалить запись из таблицы по id
 
+    //- удалить запись из таблицы по id
     public function delete($table, $id)
 
     {
@@ -127,15 +130,27 @@ class DataBase
         $stmt->execute();
         header("Location:  /Components/testing/index.php");
     }
-}
 
+
+}
 //тестинг
 
-$user = new DataBase();
+
+
+
+
+
+
+
+
+
+
 
 
 // то что должно быть в конторелере
 
+// вывод патерна сингелтон реализация патерна сингелтон
+$user = DataBase::getInstance();
 //вывод всех пользователей
 $table = 'users';
 $users = $user->getAll($table );

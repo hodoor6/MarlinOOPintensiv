@@ -24,29 +24,29 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
     ?>
     <tr>
         <td>
-            <?=$user['id']?>
+            <?=$user->id ?>
         </td>
         <td>
-            <?=$user['name']?>
+            <?=$user->name ?>
         </td>
         <td>
-            <a href="views/user.php?idUser=<?=$user['id']?>"><?=$user['login']?></a>
+            <a href="views/user.php?idUser=<?=$user->id?>"><?=$user->login?></a>
         </td>
         <td>
-            <?=$user['email']?>
+            <?=$user->email?>
         </td>
         <td>
-            <?=$user['password']?>
+            <?=$user->password?>
         </td>
         <td>
             <a href="views/register.php">Добавить</a>
         </td>
 
         <td>
-            <a href="views/profile.php?idUserUpdate=<?=$user['id']?>">Редактирование</a>
+            <a href="views/profile.php?idUserUpdate=<?=$user->id?>">Редактирование</a>
         </td>
    <td>
-            <a href="/Components/DataBase.php?idUserDelete=<?=$user['id']?>">Удаление</a>
+            <a href="/Components/DataBase.php?idUserDelete=<?=$user->id?>">Удаление</a>
         </td>
 
     </tr>
