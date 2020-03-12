@@ -203,7 +203,12 @@ try{
 
 
 
+    //метод выборки одного пользователя
 
+    public function first()
+    {
+        return  $this->results()[0];
+    }
 // getter получает приватное свойство error
     public function error()
     {
