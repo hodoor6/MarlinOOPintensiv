@@ -167,6 +167,43 @@ try{
         }
         return $this;
     }
+//метод обновление данных пользователя
+//   - обновить данные записи в таблице по id
+    public function update($table, $id,$fields = []) {
+        //удаляю последный елемент масива
+        array_pop($fields);
+        $set= '';
+        foreach ($fields as $key=>$field)
+        {
+            $set .=$key."=?,";
+        }
+        $set =rtrim($set, ',');
+
+        try{
+            $this->query = $this->pdo->prepare("SELECT id FROM users WHERE id ={$id} LIMIT 1 ");
+            $this->query->execute();
+        }catch (PDOException $e){
+            if($this->query->rowCount() == 0 ){
+                $this->massage = 'id в системе такого нет ' . $e->getMessage();
+                $this->error = true;
+                return $this;
+            }
+        }
+
+        $sql = "UPDATE {$table} SET {$set} WHERE id= {$id}";
+
+        if(!$this->query($sql,$fields)->error())
+        {
+            return $this;
+        }
+
+        $this->error = true;
+        return $this;
+    }
+
+
+
+
 // getter получает приватное свойство error
     public function error()
     {
