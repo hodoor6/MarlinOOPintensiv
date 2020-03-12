@@ -19,8 +19,6 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
 
     <?php
     foreach ($users as $user){
-
-
     ?>
     <tr>
         <td>

@@ -16,21 +16,21 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
     </tr>
     <tr>
               <td>
-            <?= $user['id'] ?>
+            <?= $user->id ?>
 
         </td>
         <td>
-            <?= $user['name'] ?>
+            <?= $user->name ?>
         </td>
 
         <td>
-            <?= $user['login'] ?>
+            <?= $user->login ?>
         </td>
         <td>
-            <?= $user['email'] ?>
+            <?= $user->email ?>
         </td>
         <td>
-            <?= $user['password'] ?>
+            <?= $user->password ?>
         </td>
 
     </tr>

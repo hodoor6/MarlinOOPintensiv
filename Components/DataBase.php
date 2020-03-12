@@ -13,228 +13,344 @@ class DataBase
     private $charset;
     private $pdo;
 
+
     // свойства которые относяться только методу к query;
-    private $query, $error = false, $results, $count;
+    private $query, $error = false, $results = null, $count= null;
+    public $massage = '';
+
 
 //созданние приватного свойства для того чтобы по умолчанию подключение к бд было null реализация патерна сингелтон
     private static $instance = null;
+
 // cоздание приватного construct  для того чтобы никто не мог получить доступ к нему реализация патерна сингелтон
-        private function __construct()
-        {
-            $this->driver = 'mysql'; // тип базы данных, с которой мы будем работать
-            $this->host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального
-            $this->dbname = 'MarlinOopComponetsDataBase'; // имя базы данных
-            $this->dbuser = 'root'; // имя пользователя для базы данных
-            $this->dbpassword = ''; // пароль пользователя
-            $this->charset = 'utf8'; // кодировка по умолчанию
+    private function __construct()
+    {
+        $this->driver = 'mysql'; // тип базы данных, с которой мы будем работать
+        $this->host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального
+        $this->dbname = 'MarlinOopComponetsDataBase'; // имя базы данных
+        $this->dbuser = 'root'; // имя пользователя для базы данных
+        $this->dbpassword = ''; // пароль пользователя
+        $this->charset = 'utf8'; // кодировка по умолчанию
 
-            $dsn = "$this->driver:host=$this->host;dbname=$this->dbname;charset=$this->charset";
-// Setting options
-            $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ];
-// Making the connection to the database
-            try {
-              $this->pdo = new PDO($dsn, $this->dbuser, $this->dbpassword, $options);
-            } catch (PDOException $e) {
-                $this->error = $e->getMessage();
-                var_dump($this->error);
-            }
+        $dsn = "$this->driver:host=$this->host;dbname=$this->dbname;charset=$this->charset";
 
+// установка pdo подключения
+        try {
+            $this->pdo = new PDO($dsn, $this->dbuser, $this->dbpassword);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, TRUE);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+
+        } catch (PDOException $e) {
+            die ("Ошибка подключения к базе данных: ".$e->getMessage());
+        }
         }
 
-// реализация патерна сингелтон через подключение к базе данных
-    public  static function getInstance()
+// реализация патерна сингелтона через подключение к базе данных
+    public static function getInstance()
 
     {
-        if(!isset(self::$instance)){
+        if (!isset(self::$instance)) {
 
             self::$instance = new Database();
         }
 
-        return  self::$instance;
+        return self::$instance;
     }
 
-    //- получить все записи из таблицы
-
-    public function getAll($table)
+    //метод для выполнения запросов обертка
+    //- получить все запись из таблицы универсальный метод
+    public function query($sql, $params = [])
     {
-        $sql = "SELECT * FROM $table";
-        $stmt = $this->pdo->query($sql);
-        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-        return $result;
-    }
-//- получить одну запись из таблицы по id
 
-    public function getOne($table, $id)
-
-    {
-        $sql = "SELECT * FROM $table where id=:id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        $result = $stmt->fetch();
-        return $result;
-    }
-    public function insert($table, array $data)
-    {
-        //удаление елемента массива так как он являеться кнопкой
-        array_pop($data);
-        $keys = array_keys($data);
-        //присваиваю плесхолдерам значение ключей
-        $column = implode(', ', $keys);
-        $values = implode(', :', $keys);
-        $sql = "INSERT INTO $table ($column) VALUE (:$values)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
-        header("Location:  /Components/testing/index.php");
-    }
-
-    //   - обновить данные записи в таблице по id
-    public function update($table, $id, $data)
-
-    {
-//удаляю последный елемент масива
-        array_pop($data);
-
-            $keys='';
-        foreach ($data as $column=>$value){
-
-            if($column !='id' )
-            {
-                $keys .= $column.'=:'.$column.', ';
-
+        //ошибка по умолчанию false
+        $this->error = false;
+        $this->query = $this->pdo->prepare($sql);
+//проверка на сушествование масива
+        if (count($params)) {
+            $i = 1;
+            //передача множества аргументов в value;
+            foreach ($params as $value) {
+                $this->query->bindValue($i, $value);
+                $i++;
             }
         }
 
-        $keys = rtrim($keys, ', ');
-
-        $sql = "UPDATE $table SET $keys  WHERE id=:id";
-        $stmt = $this->pdo->prepare($sql);
-
-        $data['id'] = $id;
-
-        $stmt->execute($data);
-        header("Location:  /Components/testing/index.php");
-
-    }
-    //- удалить запись из таблицы по id
-    public function delete($table, $id)
-
-    {
-        $id = implode('', $id);
-        $sql = "DELETE FROM $table WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':id', $id);
-        $stmt->execute();
-        header("Location:  /Components/testing/index.php");
-    }
-
-    //- получить все записи из таблицы универсальный метод
-    public function query($sql)
-
-    {
-        $this->error = false;
-        $this->query = $this->pdo->prepare($sql);
-
-// проверка на уход данных в бд
+        // проверка на уход данных в бд
         if (!$this->query->execute()) {
-            return $this->error = true;
-
+            $this->massage = $this->query->errorInfo();
+            $this->error = true;
+            return $this;
         } else {
-            //выборка данных из бд
-            $this->results = $this->query->fetchAll(PDO::FETCH_OBJ);
-            //полученные поличество колонок из бд
-            $this->count = $this->query->rowCount();
-        }
 
-// передача только создаваемого класа
+
+try{
+   // выборка данных из бд
+    $this->results = $this->query->fetchAll(PDO::FETCH_OBJ);
+                   //полученные количество колонок из бд
+            $this->count = $this->query->rowCount();
+}catch (PDOException $e){
+    //проверка на операции обновления удаления и добавление так как выборки после них нет
+                return  $this;
+            }
+
+        }
+// передача только объекта создаваемого класса
         return $this;
     }
+
+    //оберка над для SELECT метода и DELETE
+    public function action($table, $where= [], $action)
+    {
+              $this->error = false;
+
+        if (isset($where) and count($where) == 3) {
+            //масив разрешеных операторов
+            $operators = ['=', '>', '<', '>=', '<=', 'IS', 'IN', 'LIKE'];
+            // разделения масива по переменим
+            $field = $where[0];
+            $operator = $where[1];
+            $value = $where[2];
+// проверка если ли разрешеный оператор
+            if (in_array($operator, $operators)) {
+                $sql = "{$action} FROM {$table} WHERE {$field}  {$operator} ?";
+
+                if (!$this->query($sql, [$value])->error()) {
+                    return $this;
+                }
+            } else{
+
+                $this->massage = 'не верно веден оператор';
+            }
+        } else {
+
+            $this->massage = 'ведите три значения';
+        }
+
+        $this->error = true;
+       return $this;
+    }
+
+////- получить все записи из таблици из таблицы по id или все записи
+
+  public function get($table, $where = [])
+    {
+     return   $this->action($table, $where, 'SELECT *');
+    }
+
+    //    //- удалить запись из таблицы по id
+
+    public function delete($table, $where = [])
+    {
+        return   $this->action($table, $where, 'DELETE');
+
+    }
+
+
 // getter получает приватное свойство error
-    public function getError()
+    public function error()
     {
         return $this->error;
     }
+
 // getter получает приватное свойство results
     public function results()
     {
         return $this->results;
     }
+
 // getter получает приватное свойство count
+
     public function count()
     {
         return $this->count;
     }
+
 }
-
-//тестинг
-
-//тестирование метода query путем выборки всех пользователей
-$userstest = DataBase::getInstance()->query('SELECT * FROM users');
-
-// вывод ошибок  если при выполнении запроса есть ошибка
-if($userstest->getError()){
-    echo 'есть ошибки';
-
-}else{
-    echo 'нет ошибок';
-}
-//вывод результата массива что получился при выборке
-$userstest->results();
-// подсчет количества выбранных строк
-var_dump($userstest->count());
-
-
-
-
-
-
-
-
 
 // то что должно быть в конторелере
 
 // вывод патерна сингелтон реализация патерна сингелтон
-$user = DataBase::getInstance();
+$connect = DataBase::getInstance();
+
+
 //вывод всех пользователей
-$table = 'users';
-$users = $user->getAll($table );
+$connect->get('users',['id','>','0']);
 
-if(!empty($_REQUEST['idUser']))
-{
-    $user = $user->getOne($table ,$_REQUEST['idUser']);
+if($connect->error()){
+    echo 'есть ошибки'. "<br>";
+    print_r($connect->massage);
 
+}else {
+    $users = $connect->get('users',['id','>','0'])->results();
 }
 
-//вывод данныз на редактирование одного пользователя
-if(!empty($_REQUEST['idUserUpdate']))
-{
-    $user =   $user->getOne($table ,$_REQUEST['idUserUpdate']);
 
+
+
+//вывод одного пользователя
+
+if (!empty($_REQUEST['idUser'])) {
+    $connect->get('users', ['id', '=', $_REQUEST['idUser']])->first();
+//вывод ошибок
+    if($connect->error()){
+        echo 'есть ошибки'. "<br>";
+        print_r($connect->massage);
+    }
+    $user = $connect->get('users', ['id', '=', $_REQUEST['idUser']])->first();
+}
+//вывод данныз на редактирование одного пользователя
+if (!empty($_REQUEST['idUserUpdate'])) {
+    $connect->get('users', ['id' ,'=' ,$_GET['idUserUpdate']]);
+
+    if($connect->error()){
+        echo 'есть ошибки'. "<br>";
+        print_r($connect->massage);
+
+
+    }else{
+        $userEdit = $connect->get('users', ['id' ,'=' ,$_REQUEST['idUserUpdate']]);
+
+    }
 }
 
 //Добавления пользователя
 
-if(!empty($_REQUEST['addUser']))
-{
+if (!empty($_REQUEST['addUser'])) {
 
-    $user->insert($table , $_REQUEST);
+    $connect->insert('users', $_POST);
+
+    if($connect->error()){
+        echo 'есть ошибки'. "<br>";
+        print_r($connect->massage);
+
+    }else{
+        header("Location:  /Components/testing/index.php");
+
+    }
 }
 
 //Обновление  данных пользователя
-if(!empty($_REQUEST['updateUser']) and isset($_REQUEST['updateUser'] )) {
+if (!empty($_REQUEST['updateUser']) and isset($_REQUEST['updateUser'])) {
 //var_dump($_REQUEST);
 
-    $user->update($table , $_GET['id'], $_POST);
+    $updateUser =  $connect->update('users', $_GET['id'], $_POST);
+
+    if($connect->error()){
+        echo 'есть ошибки'. "<br>";
+        print_r($connect->massage);
+
+    }else{
+
+        header("Location:  /Components/testing/index.php");
+    }
 
 }
 //удаление пользователя
 
-if(!empty($_REQUEST['idUserDelete']))
-{
+if (!empty($_REQUEST['idUserDelete'])) {
 
-    $user->delete($table , $_REQUEST);
+    $connect->delete('users', ['id', '=' ,$_GET['idUserDelete']]);
+
+    if($connect->error()){
+        echo 'есть ошибки'. "<br>";
+        print_r($connect->massage);
+
+
+    }else{
+
+        header("Location:  /Components/testing/index.php");
+    }
+
 }
+
+
+//тестинг
+//реализация метода insert
+//$insertuser = DataBase::getInstance()->insert('users',['name'=>'name85','login'=>'login85','email'=>'email85','password'=>'password85']);
+//// вывод ошибок  если при выполнении запроса есть ошибка
+//    if ($insertuser->error()) {
+//вывод сообщения об ошибке
+//        print_r($insertuser->massage);
+//        echo ' ошибки есть';
+//    }
+
+
+//реализация метода update
+//$updatetest = DataBase::getInstance()->update('users','597',['name' => 'name',  'login' => 'login60','email' => 'email10','password' => '9']);
+// //вывод ошибок  если при выполнении запроса есть ошибка
+//    if ($updatetest->error()) {
+//        print_r($updatetest->massage);
+//        echo ' ошибки есть';
+//
+//    }
+// реализация метода на вывод одного пользователя
+//$getOneTest = DataBase::getInstance()->get('users',['login','=','login14']);
+//проверка пользователя
+
+//вывод ошибок
+//if($getOneTest->error()){
+//    print_r($getOneTest->massage);
+//    echo 'есть ошибки';
+//
+//}else{
+//
+//проверка пользователя по свойству
+//echo $getOneTest->first()->login;
+//}
+
+
+
+
+////реализация метода на удаление данных
+//if(DataBase::getInstance()->get('users',['id','=','81'])->count() > 0) {
+//
+//    $deletetest = DataBase::getInstance()->delete('users', ['id', '=', '103']);
+//
+//     //вывод ошибок  если при выполнении запроса есть ошибка
+//    if ($deletetest->error()) {
+//        print_r($deletetest->massage);
+//        echo ' ошибки есть';
+//
+//    }
+//    }
+
+
+////метод на выборку запрос на выполнеиие и выборку
+//if (DataBase::getInstance()->get('users', ['login', '=', '2'])->count() > 1) {
+//    $gettest = DataBase::getInstance()->get('users', ['login', '=', 'login27']);
+//
+//// вывод ошибок  если при выполнении запроса есть ошибка
+//    if ($gettest->error()) {
+//
+//        print_r($gettest->massage);
+//        echo ' ошибки есть';
+//
+//    } else {
+//        //вывод данных если нет ошибок
+//        var_dump($gettest->results());
+//    }
+//}
+
+
+////тестирование метода query путем выборки всех пользователей
+//$userstest = DataBase::getInstance()->query("SELECT * FROM users where email IN (?,?)", ['email5','email5']);
+////
+//// //вывод ошибок  если при выполнении запроса есть ошибка
+//if($userstest->error()){
+//    print_r($userstest->massage);
+//    echo 'есть ошибки';
+//
+//}else{
+//
+////вывод результата массива что получился при выборке
+//    $userstest->results();
+////проверка вывода
+//    var_dump($userstest->results());
+////// подсчет количества выбранных строк
+//    var_dump($userstest->count());
+//}
+
+
+
 

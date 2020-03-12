@@ -1,4 +1,4 @@
-<form action="/Components/DataBase.php" METHOD="post">
+<form action="/Components/DataBase.php?addUser=addUser" METHOD="post">
     <h1>Добавление пользователя</h1>
 <p><label>Имя</label></p>
     <input name="name" type="text">
@@ -9,5 +9,5 @@
     <p><label>Пароль</label></p>
     <input name="password" type="text">
     <p></p>
-    <input name="addUser" type="submit">
+    <input  type="submit" value="Добавить пользователя">
 </form>
