@@ -146,7 +146,27 @@ try{
 
     }
 
+//вставка данных веденых форму
 
+    public function insert($table, $fields = []) {
+
+
+        $values= '';
+        foreach ($fields as $key=>$field)
+        {
+            $values .="?,";
+        }
+        $values =rtrim($values, ',');
+
+        $sql = "INSERT INTO {$table} (`".implode('`, `', array_keys($fields))."`) VALUES ({$values})";
+        $this->query = $this->pdo->prepare($sql);
+
+        if(!$this->query($sql,$fields)->error())
+        {
+            return $this;
+        }
+        return $this;
+    }
 // getter получает приватное свойство error
     public function error()
     {
