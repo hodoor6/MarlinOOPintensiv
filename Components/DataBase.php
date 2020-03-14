@@ -1,16 +1,11 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Components/lib/dbconfig.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Components/Config.php';
 
 class DataBase
 {
-    private $driver;
-    private $host;
-    private $dbname;
-    private $dbuser;
-    private $dbpassword;
-    private $charset;
     private $pdo;
 
 
@@ -25,18 +20,12 @@ class DataBase
 // cоздание приватного construct  для того чтобы никто не мог получить доступ к нему реализация патерна сингелтон
     private function __construct()
     {
-        $this->driver = 'mysql'; // тип базы данных, с которой мы будем работать
-        $this->host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального
-        $this->dbname = 'MarlinOopComponetsDataBase'; // имя базы данных
-        $this->dbuser = 'root'; // имя пользователя для базы данных
-        $this->dbpassword = ''; // пароль пользователя
-        $this->charset = 'utf8'; // кодировка по умолчанию
-
-        $dsn = "$this->driver:host=$this->host;dbname=$this->dbname;charset=$this->charset";
+  // установка кодировки работает с версии PHP 5.3.6.
+        $dsn = "".Config::get('mysql.driver').":host=".Config::get('mysql.host').";dbname=".Config::get('mysql.database').";charset=".Config::get('mysql.charset').";";
 
 // установка pdo подключения
         try {
-            $this->pdo = new PDO($dsn, $this->dbuser, $this->dbpassword);
+            $this->pdo = new PDO($dsn, Config::get('mysql.username'),Config::get('mysql.password'));
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, TRUE);
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
