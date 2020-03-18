@@ -263,7 +263,7 @@
 <!--<!--<form action="" METHOD="get">-->-->
 <!--<!--    <h1>Добавление пользователя</h1>-->-->
 <!--<!--<p><label>Имя</label></p>-->-->
-<!--<!--    <input name="name" type="text" value="-->--><?// // echo Input::get('name') ?><!--<!--">-->-->
+<!--<!--    <input name="name" type="text" value="-->--><? // // echo Input::get('name') ?><!--<!--">-->-->
 <!--<!--    <p><label>Логин</label></p>-->-->
 <!--<!--    <input name="login" type="text" value="-->--><?php ////echo $test ?><!--<!--" >-->-->
 <!--<!--    <p><label>Почта </label></p>-->-->

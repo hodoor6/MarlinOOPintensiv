@@ -15,7 +15,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
         <th>Пароль</th>
     </tr>
     <tr>
-              <td>
+        <td>
             <?= $user->id ?>
 
         </td>
@@ -35,4 +35,4 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
 
     </tr>
 
-    </table>
+</table>

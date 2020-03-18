@@ -16,7 +16,7 @@ class Validate
 
     public function check($source, $items = [])
     {
-       //создание ключа если отправлен файл в массиве $_FILES
+        //создание ключа если отправлен файл в массиве $_FILES
         if (isset($_FILES)) {
             foreach ($_FILES as $key => $name) {
                 $source[$key] = $name;
@@ -57,9 +57,9 @@ class Validate
                             $fileName = $_FILES[$item]['name'];
                             $fileNameCmps = explode(".", $fileName);
                             $fileExtension = strtolower(end($fileNameCmps));
-                                if (!empty($fileExtension) and !in_array($fileExtension,$rule_value)) {
-                                    $this->addErrors("{$item} разрешенный формат только " . implode(', ', $rule_value));
-                                }
+                            if (!empty($fileExtension) and !in_array($fileExtension, $rule_value)) {
+                                $this->addErrors("{$item} разрешенный формат только " . implode(', ', $rule_value));
+                            }
                             break;
                         case "size":
                             if ($value['size'] > $rule_value) {
@@ -98,7 +98,6 @@ class Validate
     }
 
 
-
-    }
+}
 
 

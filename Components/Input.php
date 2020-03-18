@@ -9,16 +9,16 @@ class Input
 //определяем тип запроса
 //        $type =$_SERVER['REQUEST_METHOD'];
 
- switch (mb_strtolower($type)){
-     case'post':
- return (!empty($_POST)) ? true : false;
-     case'get':
- return (!empty($_GET))  ?true  :false;
-     default:
-         return false;
-         break;
- }
-         }
+        switch (mb_strtolower($type)) {
+            case'post':
+                return (!empty($_POST)) ? true : false;
+            case'get':
+                return (!empty($_GET)) ? true : false;
+            default:
+                return false;
+                break;
+        }
+    }
 
 // метод сохранения значений в полях при валидации, если валидация не прошла
     public static function get($item)

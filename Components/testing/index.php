@@ -18,37 +18,37 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
     </tr>
 
     <?php
-    foreach ($users as $user){
-    ?>
-    <tr>
-        <td>
-            <?=$user->id ?>
-        </td>
-        <td>
-            <?=$user->name ?>
-        </td>
-        <td>
-            <a href="views/user.php?idUser=<?=$user->id?>"><?=$user->login?></a>
-        </td>
-        <td>
-            <?=$user->email?>
-        </td>
-        <td>
-            <?=$user->password?>
-        </td>
-        <td>
-            <a href="views/register.php">Добавить</a>
-        </td>
+    foreach ($users as $user) {
+        ?>
+        <tr>
+            <td>
+                <?= $user->id ?>
+            </td>
+            <td>
+                <?= $user->name ?>
+            </td>
+            <td>
+                <a href="views/user.php?idUser=<?= $user->id ?>"><?= $user->login ?></a>
+            </td>
+            <td>
+                <?= $user->email ?>
+            </td>
+            <td>
+                <?= $user->password ?>
+            </td>
+            <td>
+                <a href="views/register.php">Добавить</a>
+            </td>
 
-        <td>
-            <a href="views/profile.php?idUserUpdate=<?=$user->id?>">Редактирование</a>
-        </td>
-   <td>
-            <a href="/Components/DataBase.php?idUserDelete=<?=$user->id?>">Удаление</a>
-        </td>
+            <td>
+                <a href="views/profile.php?idUserUpdate=<?= $user->id ?>">Редактирование</a>
+            </td>
+            <td>
+                <a href="/Components/DataBase.php?idUserDelete=<?= $user->id ?>">Удаление</a>
+            </td>
 
-    </tr>
-    <?php
+        </tr>
+        <?php
     }
     ?>
     <table>

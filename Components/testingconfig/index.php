@@ -7,7 +7,7 @@ $GLOBALS['config'] = [
         'something' => [
             'no' => [
                 'foo' => [
-                    'bar'=>'baz'
+                    'bar' => 'baz'
                 ]
             ]
         ]
