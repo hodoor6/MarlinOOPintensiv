@@ -50,7 +50,7 @@ class Validate
                         case "uniqie":
                             $check = $this->db->get($rule_value, [$item, '=', $value]);
                             if ($check->count()) {
-                                $this->addErrors("{$item} существует (already exists .)");
+                                $this->addErrors("{$item} существует (already exists).");
                             }
                             break;
                         case "type":

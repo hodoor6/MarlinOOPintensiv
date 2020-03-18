@@ -30,7 +30,7 @@ if (Input::exists('post')) {
     ]);
 
     if ($validation->passed()) {
-      // в случае удачи перенаправление пользователя
+     //       в случае удачи перенаправление пользователя
         Session::flash('success', 'register success');
 //        header('location: /Components/testing/index.php');
     } else {
