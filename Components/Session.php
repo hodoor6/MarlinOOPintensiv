@@ -25,4 +25,25 @@ class Session
     {
         return $_SESSION[$name];
     }
+
+    //метод flash для вывода одноразовых сообщенный
+
+    public static function flash($name,$message = '')
+
+    {
+        // проверяет существует ли сессия
+        if (self::exists($name) && self::exists($name) !== '') {
+            //получает flash сообщение
+           $session = self::get($name);
+          self::delete($name);
+          // возвращаем полученное сообщение
+          return  $session;
+        }else{
+            //записивает в сессию сообщение
+            self::put($name,$message);
+        }
+
+
+    }
+
 }

@@ -30,7 +30,9 @@ if (Input::exists('post')) {
     ]);
 
     if ($validation->passed()) {
-        echo 'все заполнено верно';
+      // в случае удачи перенаправление пользователя
+        Session::flash('success', 'register success');
+//        header('location: /Components/testing/index.php');
     } else {
         foreach ($validation->errors() as $error) {
             echo $error . '</br>';
@@ -41,7 +43,7 @@ if (Input::exists('post')) {
 
 
 ?>
-
+<?php echo Session::flash('success') ?>
 
 <form action="" enctype="multipart/form-data" METHOD="post">
     <h1>Добавление пользователя</h1>
