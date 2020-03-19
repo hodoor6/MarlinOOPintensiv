@@ -1,6 +1,11 @@
 <?php
+session_start();
 require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/Components/Session.php';
+echo Session::flash('success');
 ?>
+
+
 <h1>Список всех пользователей</h1>
 
 <table width="800" border="1" cellspacing="0" cellpadding="4" align="center">
