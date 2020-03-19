@@ -1,5 +1,6 @@
 <?php
 session_start();
+require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
 require $_SERVER["DOCUMENT_ROOT"] . '/Components/Validate.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Components/input.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Components/Token.php';

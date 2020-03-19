@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
+
 
 class Validate
 {
@@ -16,6 +16,7 @@ class Validate
 
     public function check($source, $items = [])
     {
+
         //создание ключа если отправлен файл в массиве $_FILES
         if (isset($_FILES)) {
             foreach ($_FILES as $key => $name) {
@@ -23,6 +24,7 @@ class Validate
 
             }
         }
+//        var_dump($source);die;
 //разбиваем массив с правилами валидации на блоки $item  для проверки полей
         foreach ($items as $item => $rules) {
             foreach ($rules as $rule => $rule_value) {
@@ -51,6 +53,12 @@ class Validate
                             $check = $this->db->get($rule_value, [$item, '=', $value]);
                             if ($check->count()) {
                                 $this->addErrors("{$item} существует (already exists).");
+                            }
+                            break;
+                            case "email":
+
+                            if (!filter_var($value,FILTER_VALIDATE_EMAIL)) {
+                                $this->addErrors("{$item} $value не является email (in not an email) ");
                             }
                             break;
                         case "type":
