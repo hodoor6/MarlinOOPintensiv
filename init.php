@@ -9,4 +9,4 @@ require_once 'Components/Token.php';
 require_once 'Components/Session.php';
 require_once 'Components/User.php';
 require_once 'Components/Redirect.php';
-require_once 'Components/inludes/header.php';
+

@@ -3,6 +3,19 @@ session_start();
 require $_SERVER['DOCUMENT_ROOT'] . '/Components/DataBase.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/Components/Session.php';
 echo Session::flash('success');
+
+//вывод всех пользователей
+//$connect->get('users',['id','>','0']);
+
+if($connect->error()){
+    echo 'есть ошибки'. "<br>";
+    print_r($connect->massage);
+
+}else {
+    $users = $connect->get('users',['id','>','0'])->results();
+}
+
+
 ?>
 
 

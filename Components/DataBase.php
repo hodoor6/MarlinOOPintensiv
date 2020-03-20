@@ -225,20 +225,6 @@ try{
 $connect = DataBase::getInstance();
 
 
-//вывод всех пользователей
-$connect->get('users',['id','>','0']);
-
-if($connect->error()){
-    echo 'есть ошибки'. "<br>";
-    print_r($connect->massage);
-
-}else {
-    $users = $connect->get('users',['id','>','0'])->results();
-}
-
-
-
-
 //вывод одного пользователя
 
 if (!empty($_REQUEST['idUser'])) {

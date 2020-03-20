@@ -49,6 +49,8 @@ if (Input::exists('post')) {
 
 
 ?>
+
+<?php   require_once 'Components/inludes/header.php'; ?>
 <div class="container">
     <h2>Регестрация пользователя</h2>
     <div class="row">
