@@ -78,5 +78,8 @@ class User
         return $this->isLoggedIn;
     }
 
-
+    //удаление сессии при выходе из системы
+  public function logout(){
+      return  Session::delete($this->session_name);
+}
 }
