@@ -7,6 +7,7 @@ $user = new User;
 if($user->isLoggedIn()){
     echo  "Hi, <a href='#'>{$user->data()->name}</a>";
    echo  "<p><a href='logout.php'>Logout</a><p/>";
+   echo  "<p><a href='update.php'>Update</a><p/>";
 }else{
  echo "<p><a href='login.php'>login</a> or <a href='register.php'>Register</a><p/>";
 }

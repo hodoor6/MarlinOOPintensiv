@@ -35,6 +35,17 @@ class User
         $this->db->insert('users', $fields);
     }
 
+// обертка над update - обновление данных с формы
+    public function update($fields = [], $id = null)
+    {
+        // проверка авторизованного пользователя если авторизирован берем id
+        if (!$id && $this->isLoggedIn()) {
+            $id = $this->data()->id;
+        }
+        $this->db->update('users', $id, $fields);
+    }
+
+
 // метод проверки пароля на совпадения и email для авторизации
     public function login($email = null, $password = null, $remember = false)
     {
@@ -81,7 +92,7 @@ class User
         if (is_numeric($value)) {
             $this->data = $this->db->get('users', ['id', '=', $value])->first();
         } else {
-            $this->data = $this->db->get('users', ['email', '=', $value])->first();
+            $this->data = $this->db->get('users', ['email', '=', $value]);
         }
         //проверка на существование данных после выборки
         if ($this->data) {
@@ -106,8 +117,7 @@ class User
     //удаление сессии при выходе из системы
     public function logout()
     {
-
-         $this->db->delete('user_sessions',['hash','=',Cookie::get($this->data()->id)]);
+        $this->db->delete('user_sessions', ['hash', '=', Cookie::get($this->data()->id)]);
         Cookie::delete($this->cookieName);
         return Session::delete($this->session_name);
     }

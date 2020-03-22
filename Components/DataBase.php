@@ -160,7 +160,7 @@ try{
 //   - обновить данные записи в таблице по id
     public function update($table, $id,$fields = []) {
         //удаляю последный елемент масива
-        array_pop($fields);
+//        array_pop($fields);
         $set= '';
         foreach ($fields as $key=>$field)
         {
