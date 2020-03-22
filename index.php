@@ -2,10 +2,7 @@
 require_once'init.php';
 echo  Session::flash('login');
 require_once 'Components/inludes/header.php';
-
 $user = new User;
-$anotherUser = new User(127);
-
 //проверка на авторизацию пользователя
 if($user->isLoggedIn()){
     echo  "Hi, <a href='#'>{$user->data()->name}</a>";

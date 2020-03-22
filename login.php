@@ -2,17 +2,20 @@
 require_once 'init.php';
 if (input::exists('post')) {
     if (Token::check(Input::get('token'))) {
-        //валидация
+//проверка на существование чекбокса
+       $remember = Input::get('remember') === 'on' ? true : false;
+             //валидация
         $validate = new Validate();
         $validate->check($_POST, [
             'email' => ['required' => true, 'email' => 'email'],
             'password' => ['required' => true]
         ]);
 
+
         if ($validate->passed()) {
 //авторизация пользователя
             $user = new User;
-            $login = $user->login(Input::get('email'), Input::get('password'));
+            $login = $user->login(Input::get('email'), Input::get('password') , $remember);
 
             if ($login) {
                 Session::flash('login', 'logged in successfully');
@@ -44,12 +47,12 @@ if (input::exists('post')) {
                     <label for="exampleInputPassword1">Password</label>
                     <input type="text" class="form-control" name="password" placeholder="Password">
                 </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                    <label class="form-check-label" for="remember">Remember me</label>
+                </div>
                 <div class="form-group">
                     <input type="hidden" class="form-control" name="token" value="<?php echo Token::generate() ?>">
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
